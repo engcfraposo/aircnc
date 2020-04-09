@@ -8,12 +8,12 @@ function App() {
 
     return (
       <div className="container">
-        <img src={logo} alt="AirCnC"/>
-        <div className="content">
+          <img src={logo} alt="AirCnC"/>
+          <div className="content">
 
-          <Routes/>
+            <Routes/>
 
-        </div>
+          </div>
       </div>
   );
 }
