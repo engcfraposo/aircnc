@@ -1,8 +1,109 @@
-import React from 'react';
-import { View, Text } from 'react-native'
+import React, {useState} from 'react';
+import { SafeAreaView, Alert, AsyncStorage, Text, StyleSheet, TextInput, TouchableOpacity, Image } from 'react-native'
+import Logo from '../assets/logo.png'
+import api from '../services/Api'
 
-export default function Book(){
-    return <View>
-        <Text>Hello word!</Text>
-    </View>
+export default function Book({navigation}){
+    const id = navigation.getParam('id');
+
+    const [date, setDate] = useState('');
+
+    async function handleSubmit(){
+        const user_id = await AsyncStorage.getItem('user');
+
+        await api.post(`/spots/${id}/bookings`, {
+            date
+        }, {
+            headers: { user_id }
+        })
+        Alert.alert('Solicitação de reserva enviada.')
+        navigation.navigate('List')
+    }
+
+    async function handleCancel(){
+        navigation.navigate('List')
+    }
+    
+    return <SafeAreaView style={styles.container}>
+        <Image style={styles.logo} source={Logo}/>
+         <Text style={styles.label}>DATA DE INTERESSE *</Text>
+            <TextInput 
+                style={styles.input}
+                placeholder="Qual data você quer reservar?"
+                placeholderTextColor="#999"
+                autoCapitalize="words"
+                autoCorrect={false}
+                value={date}
+                onChangeText={setDate}
+                   
+            />
+            <TouchableOpacity onPress={handleSubmit} style={styles.button}>
+                <Text style={styles.buttonText}>Solicitar reserva</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity onPress={handleCancel} style={[styles.button, styles.cancelButton]}>
+                <Text style={styles.buttonText}>Cancelar</Text>
+            </TouchableOpacity>
+
+
+    </SafeAreaView>
 }
+
+const styles = StyleSheet.create({
+    container:{
+        flex: 1,
+        margin: 30,
+        marginTop: 50,
+    },
+    
+    logo:{
+        height: 50,
+        resizeMode: "contain",
+        alignSelf: "center",
+        marginTop: 40,
+
+    },
+
+    label:{
+        marginTop: 40,
+        fontWeight: 'bold',
+        color: '#444',
+        marginBottom: 8,
+    },
+
+    input:{
+        borderWidth: 1,
+        borderColor: '#ddd',
+        paddingHorizontal: 20,
+        fontSize: 16,
+        color: '#444',
+        height: 44,
+        marginBottom: 20,
+        borderRadius: 2,
+
+    },
+
+    button:{
+        height: 42,
+        backgroundColor: '#f05a5b',
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 2,
+        borderRadius: 2,
+    },
+
+    cancelButton:{
+        
+        backgroundColor: '#ccc',
+        marginTop: 10,
+        
+    },
+
+    buttonText:{
+        color: '#fff',
+        fontWeight: 'bold',
+        fontSize: 16,
+    }
+
+    
+})
