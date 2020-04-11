@@ -21,12 +21,12 @@ io.on('connection', socket =>{
         
     const { user_id } = socket.handshake.query;
 
-    connectedUsers[user_id] = connectedUsers;
+    connectedUsers[user_id] = socket.id;
 });
 
 app.use((req, res, next) => {
     req.io = io;
-    req.connectedUsers = connectedUsers
+    req.connectedUsers = connectedUsers;
     return next();
 })
 

@@ -10,13 +10,12 @@ export default function Dashboard(){
     const [requests, setRequests] = useState([]);
 
     const user_id = localStorage.getItem('user')
-    const socket = useMemo( ()=> socketio('http://192.168.0.77:3333', { 
+    const socket = useMemo( ()=> socketio('http://localhost:3333', { 
             query: { user_id }, 
         }), [user_id]);
 
     useEffect(() =>{
         socket.on('booking_request', data => {
-           console.log(data)
             setRequests([...requests, data])
         })
 
@@ -33,6 +32,20 @@ export default function Dashboard(){
         }
         loadSpots();
     }, []);
+
+    async function handleAccepted(id){
+        await api.post(`/bookings/${id}/approvals`)
+        
+        setRequests (requests.filter(request => request._id !== id ))
+        
+    }
+
+    async function handleRejected(id){
+        await api.post(`/bookings/${id}/rejects`)
+        
+        setRequests (requests.filter(request => request._id !== id ))
+
+    }
     
     return (
         <>
@@ -40,10 +53,10 @@ export default function Dashboard(){
             {requests.map(request => (
                 <li key={request._id}>
                     <p>
-                        <strong>{request.user.email}</strong> está solicitando uma reserva em <strong>{request.spot.company}></strong> para a data: <strong>{request.date}</strong>
+                        <strong>{request.user.email}</strong> está solicitando uma reserva em <strong>{request.spot.company}</strong> para a data: <strong>{request.date}</strong>
                     </p>
-                    <button>ACEITAR</button>
-                    <button>ACEITAR</button>
+                    <button className="accepted" onClick={() => handleAccepted(request._id)} >ACEITAR</button>
+                    <button className="rejected" onClick={() => handleRejected(request._id)} >REJEITAR</button>
                 </li>
             ))}
             </ul>        
