@@ -1,9 +1,7 @@
-const Booking = require('../Models/Booking')
+import Booking from "../Models/Booking";
 
-
-module.exports = {
-    async store(req, res){
-
+export default {
+    async store(req, res) {
         const { user_id } = req.headers;
         const { spot_id } = req.params;
         const { date } = req.body;
@@ -12,17 +10,16 @@ module.exports = {
             user: user_id,
             spot: spot_id,
             date,
-
         });
 
-        await booking.populate('user').populate('spot').execPopulate();
+        await booking.populate("user").populate("spot").execPopulate();
 
-        const ownerSocket = req.connectedUsers[booking.spot.user]
+        const ownerSocket = req.connectedUsers[booking.spot.user];
 
         if (ownerSocket) {
-            req.io.to(ownerSocket).emit('booking_request', booking);
+            req.io.to(ownerSocket).emit("booking_request", booking);
         }
 
-        return res.json(booking)
-    }
-}
+        return res.json(booking);
+    },
+};

@@ -1,22 +1,21 @@
-const Booking = require('../Models/Booking')
+import Booking from "../Models/Booking";
 
-module.exports = {
-    async store(req, res){
-
+export default {
+    async store(req, res) {
         const { booking_id } = req.params;
 
-        const booking = await Booking.findById(booking_id).populate('spot');
-        
+        const booking = await Booking.findById(booking_id).populate("spot");
+
         booking.approved = true;
 
         await booking.save();
 
         const bookingUserSocket = req.connectedUsers[booking.user];
 
-        if(bookingUserSocket) {
-            req.io.to(bookingUserSocket).emit('booking_response', booking)
+        if (bookingUserSocket) {
+            req.io.to(bookingUserSocket).emit("booking_response", booking);
         }
 
         return res.json(booking);
-    }
-}
+    },
+};

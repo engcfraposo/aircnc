@@ -1,28 +1,28 @@
-const express = require('express');
-const multer = require('multer');
+import { Router } from "express";
+import multer from "multer";
 
-const uploadConfig = require('./config/upload')
+import uploadConfig from "./config/upload";
 
-const SessionController = require('./Controllers/SessionController');
-const SpotController = require('./Controllers/SpotController');
-const DashboardController = require('./Controllers/DashboardController');
-const BookingController = require('./Controllers/BookingController');
-const ApprovalController = require('./Controllers/ApprovalController');
-const RejectController = require('./Controllers/RejectController');
+import SessionController from "./Controllers/SessionController";
+import SpotController from "./Controllers/SpotController";
+import DashboardController from "./Controllers/DashboardController";
+import BookingController from "./Controllers/BookingController";
+import ApprovalController from "./Controllers/ApprovalController";
+import RejectController from "./Controllers/RejectController";
 
-const routes = express.Router();
+const routes = Router();
 const upload = multer(uploadConfig);
 
-routes.post('/sessions', SessionController.store);
+routes.post("/sessions", SessionController.store);
 
-routes.get('/spots', SpotController.index);
-routes.post('/spots', upload.single('thumbnail'), SpotController.store);
+routes.get("/spots", SpotController.index);
+routes.post("/spots", upload.single("thumbnail"), SpotController.store);
 
-routes.get('/dashboard', DashboardController.show);
+routes.get("/dashboard", DashboardController.show);
 
-routes.post('/spots/:spot_id/bookings', BookingController.store);
+routes.post("/spots/:spot_id/bookings", BookingController.store);
 
-routes.post('/bookings/:booking_id/approvals', ApprovalController.store);
-routes.post('/bookings/:booking_id/rejects', RejectController.store),
+routes.post("/bookings/:booking_id/approvals", ApprovalController.store);
+routes.post("/bookings/:booking_id/rejects", RejectController.store);
 
-module.exports = routes;
+export default routes;
